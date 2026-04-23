@@ -1,0 +1,109 @@
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" type="image/png" href="icon.png">
+<header><div class="language-picker" style="position: absolute; top: 20px; nav-left: 20px;">
+   <nav class="navbar">
+    <div class="logo">🌿 YouthCare</div>
+    
+    <div class="hamburger" onclick="toggleMenu()">
+       
+    </div>
+
+    <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="tracker.html">Cycle</a></li>
+        <li><a href="mental.html">Mental Health</a></li>
+        <li><a href="hiv.html">HIV Education</a></li>
+         <li><a href="lessons.html">Lessons</a></li>
+        <li><a href="chat.html">Chat</a></li>
+        <li><a href="aibot.html">AI assistant</a></li>
+    </ul>
+       
+
+</nav>
+    <button class="btn-lang" onclick="changeLanguage('en')">🇬🇧 EN</button>
+    <button class="btn-lang" onclick="changeLanguage('rw')">🇷🇼 RW</button>
+</div></header>
+<main class="container">
+    <div class="card">
+        <div class="dashboard-layout">
+            
+            <div class="info-aside">
+                <h2 style="color: var(--primary);">Live Health Tracker</h2>
+                <p>
+        Welcome to the latest version of our <strong>Live Health Tracker</strong>, now featuring a 
+        streamlined <strong>Calendar Ring</strong> interface designed for intuitive, real-time cycle 
+        monitoring. This upgraded version moves away from traditional list views, providing a visual 
+        representation of your cycle phases to help you understand your body’s natural rhythms at a 
+        glance. By integrating modern design with essential health data, we aim to provide a more 
+        interactive and personalized experience for managing your reproductive wellness.
+    </p>
+                <p>Select your period start date on the calendar ring to the right.</p>
+                
+                <div style="background: var(--bg-light); padding: 15px; border-radius: 10px; margin: 20px 0;">
+                    <h1 id="currentDayText" style="margin:0; color: var(--secondary);">Day --</h1>
+                    <p id="phaseStatus" style="font-weight: bold; margin: 5px 0;">Waiting for input...</p>
+                </div>
+
+                <ul style="font-size: 0.85rem; color: #555; padding-left: 20px;">
+                    <li><strong>Blue Border:</strong> Today's Date</li>
+                    <li style="color: red;"><strong>Red:</strong> Menstruation Phase</li>
+                    <li style="color: green;"><strong>Green:</strong> High Fertility Window</li>
+                    <li style="color: blueviolet;"><strong>Purple:</strong>Infertile Phase</li>
+                </ul>
+                <h3>How to Use the Tracker</h3>
+    <ol class="instruction-list">
+        <li>
+            <strong>Select Your Start Date:</strong> Locate the current or most recent start date 
+            of your period on the <strong>Calendar Ring</strong> (numbered 1–30). Click on the 
+            specific day to set your baseline.
+        </li>
+        <li>
+            <strong>Identify Your Phase:</strong> Once selected, the ring will automatically update 
+            with color-coded indicators:
+            <ul>
+                <li><span style="color: red;"><strong>Red:</strong></span> Indicates your <strong>Menstruation Phase</strong>.</li>
+                <li><span style="color: green;"><strong>Green:</strong></span> Highlights your <strong>High Fertility Window</strong>.</li>
+                <li><span style="color: blueviolet;"><strong>Purple:</strong></span> Marks the <strong>Infertile Phase</strong>.</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Check Today's Status:</strong> Look for the <span class="phase-blue">Blue Border</span> 
+            on the ring; this highlights today's current date relative to your cycle.
+        </li>
+        <li>
+            <strong>Track Your Progress:</strong> The <strong>Day --</strong> display on the left 
+            will update to show exactly which day of your cycle you are currently on, providing 
+            real-time feedback based on your input.
+        </li>
+    </ol>
+            </div>
+
+            <div class="ring-aside">
+                <div class="wheel-container">
+                    <div class="wheel-center">
+                        <span style="font-size: 2rem;">🗓️</span>
+                    </div>
+                    <div id="wheelDots"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="ring-section">
+    <div class="wheel-container">
+        <div class="wheel-center" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <span style="font-size: 2.5rem;">📅</span>
+        </div>
+        <div id="wheelDots"></div>
+    </div>
+</div>
+
+</main>
+<!-- AI Assistant Floating Button -->
+<a href="chat.html" class="ai-float-btn">
+  🤖 Meet AI Assistant
+</a>
+<button class="access-btn" onclick="speakPage()">🔊 Speak Page</button>
+<button class="access-btn" onclick="stopSpeaking()">🔇 Stop Voice</button>
+
+<script src="script.js"></script>

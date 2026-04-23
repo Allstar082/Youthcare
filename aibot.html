@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YouthCare AI Chat | eMenya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #00b894;
+      --green-dark: #00997d;
+      --green-glow: rgba(0,184,148,0.35);
+      --bg-deep: #07111f;
+      --bg-card: #0d1f3c;
+      --bg-header: #0a1a30;
+      --bg-input: #0f2747;
+      --bg-bubble-bot: #152e50;
+      --text-primary: rgba(255,255,255,0.92);
+      --text-muted: rgba(255,255,255,0.45);
+      --text-hint: rgba(255,255,255,0.25);
+      --border: rgba(255,255,255,0.07);
+      --border-soft: rgba(255,255,255,0.11);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      overflow: hidden;
+    }
+
+    /* ── NAV (matches your site) ─────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      height: 56px;
+    }
+
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--green);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 20px;
+      transition: all 0.2s;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--green);
+      background: rgba(232, 236, 235, 0.1);
+    }
+
+    .nav-lang {
+      display: flex;
+      background: rgba(255,255,255,0.06);
+      border-radius: 20px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .lang-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .lang-btn.active {
+      background: var(--green);
+      color: #fff;
+    }
+
+    /* ── LAYOUT ──────────────────────────────────────── */
+    .page {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding-top: 56px;
+    }
+
+    /* ── CHAT HEADER ─────────────────────────────────── */
+    .chat-header {
+      background: linear-gradient(135deg, #0f3460 0%, #0a1a30 100%);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .bot-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), #00cec9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      box-shadow: 0 0 18px var(--green-glow);
+      animation: avatarPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes avatarPulse {
+      0%, 100% { box-shadow: 0 0 18px var(--green-glow); }
+      50% { box-shadow: 0 0 28px rgba(0,184,148,0.55); }
+    }
+
+    .header-info h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .online-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .header-status span {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .privacy-pill {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,184,148,0.1);
+      border: 1px solid rgba(0,184,148,0.25);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    /* ── TOPICS BAR ──────────────────────────────────── */
+    .topics-bar {
+      display: flex;
+      gap: 8px;
+      padding: 10px 16px;
+      overflow-x: auto;
+      background: var(--bg-input);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      scrollbar-width: none;
+    }
+
+    .topics-bar::-webkit-scrollbar { display: none; }
+
+    .topic-chip {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-soft);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 20px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .topic-chip:hover {
+      background: rgba(0,184,148,0.15);
+      border-color: rgba(0,184,148,0.4);
+      color: var(--green);
+      transform: translateY(-1px);
+    }
+
+    /* ── MESSAGES AREA ───────────────────────────────── */
+    .messages-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      background: var(--bg-deep);
+    }
+
+    .messages-area::-webkit-scrollbar { width: 3px; }
+    .messages-area::-webkit-scrollbar-track { background: transparent; }
+    .messages-area::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+    }
+
+    /* ── MESSAGE ROW ─────────────────────────────────── */
+    .msg-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      animation: msgIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .msg-row.user { flex-direction: row-reverse; }
+
+    .msg-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .msg-icon.bot { background: linear-gradient(135deg, var(--green), #00cec9); }
+    .msg-icon.user { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
+
+    .msg-col { display: flex; flex-direction: column; max-width: 76%; }
+    .msg-row.user .msg-col { align-items: flex-end; }
+
+    .msg-bubble {
+      padding: 12px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .msg-bubble.bot {
+      background: var(--bg-bubble-bot);
+      color: var(--text-primary);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border-soft);
+    }
+
+    .msg-bubble.user {
+      background: linear-gradient(135deg, var(--green), #00cec9);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg-bubble strong { font-weight: 600; }
+
+    .msg-time {
+      font-size: 10px;
+      color: var(--text-hint);
+      margin-top: 5px;
+      padding: 0 4px;
+    }
+
+    /* ── TYPING INDICATOR ────────────────────────────── */
+    .typing-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      animation: msgIn 0.3s ease;
+    }
+
+    .typing-bubble {
+      background: var(--bg-bubble-bot);
+      border: 1px solid var(--border-soft);
+      border-radius: 20px;
+      border-bottom-left-radius: 4px;
+      padding: 14px 18px;
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      background: rgba(255,255,255,0.35);
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.18s; }
+    .dot:nth-child(3) { animation-delay: 0.36s; }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+      30% { transform: translateY(-7px); opacity: 1; }
+    }
+
+    /* ── INPUT AREA ──────────────────────────────────── */
+    .input-area {
+      flex-shrink: 0;
+      background: var(--bg-input);
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .input-box {
+      flex: 1;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border-soft);
+      border-radius: 22px;
+      padding: 12px 18px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: inherit;
+      resize: none;
+      outline: none;
+      max-height: 110px;
+      line-height: 1.55;
+      transition: border-color 0.2s;
+    }
+
+    .input-box::placeholder { color: var(--text-hint); }
+    .input-box:focus { border-color: rgba(0,184,148,0.5); }
+
+    .send-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), #00cec9);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px var(--green-glow);
+    }
+
+    .send-btn:hover { transform: scale(1.07); box-shadow: 0 6px 20px rgba(0,184,148,0.5); }
+    .send-btn:active { transform: scale(0.95); }
+    .send-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+    .send-btn svg { width: 19px; height: 19px; fill: #fff; }
+
+    /* ── DISCLAIMER ──────────────────────────────────── */
+    .disclaimer {
+      text-align: center;
+      font-size: 10px;
+      color: var(--text-hint);
+      padding: 5px 16px 8px;
+      background: var(--bg-input);
+    }
+
+    /* ── WELCOME BADGE ───────────────────────────────── */
+    .welcome-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(0,184,148,0.1);
+      border: 1px solid rgba(0,184,148,0.22);
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 12px;
+      margin-bottom: 7px;
+    }
+
+    /* ── MOBILE ──────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .nav-links { display: none; }
+      .privacy-pill span { display: none; }
+      .msg-col { max-width: 88%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">🌿 YouthCare</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="tracker.html">Cycle</a></li>
+    <li><a href="mental.html">Mental Health</a></li>
+    <li><a href="hiv.html">HIV Education</a></li>
+    <li><a href="lessons.html">Lessons</a></li>
+    <li><a href="chat.html">Chat</a></li>
+    <li><a href="aibot.html" class="active">AI Assistant</a></li>
+  </ul>
+  <div class="nav-lang">
+    <button class="lang-btn active" id="btnEN" onclick="setLang('en')">🇬🇧 EN</button>
+    <button class="lang-btn" id="btnRW" onclick="setLang('rw')">🇷🇼 RW</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- CHAT HEADER -->
+  <div class="chat-header">
+    <div class="bot-avatar">🌿</div>
+    <div class="header-info">
+      <h2>YouthCare AI</h2>
+      <div class="header-status">
+        <div class="online-dot"></div>
+        <span id="statusText">SRH & Mental Health Assistant</span>
+      </div>
+    </div>
+    <div class="privacy-pill">🔒 <span>Anonymous & Private</span></div>
+  </div>
+
+  <!-- TOPICS -->
+  <div class="topics-bar" id="topicsBar">
+    <button class="topic-chip" onclick="askTopic('HIV prevention tips')">HIV Prevention</button>
+    <button class="topic-chip" onclick="askTopic('menstrual health and cycle advice')">Menstrual Health</button>
+    <button class="topic-chip" onclick="askTopic('I feel very anxious and stressed')">Anxiety & Stress</button>
+    <button class="topic-chip" onclick="askTopic('contraception methods available')">Contraception</button>
+    <button class="topic-chip" onclick="askTopic('depression symptoms and what to do')">Depression</button>
+    <button class="topic-chip" onclick="askTopic('STI symptoms and prevention')">STIs</button>
+    <button class="topic-chip" onclick="askTopic('safe sex practices for youth')">Safe Sex</button>
+    <button class="topic-chip" onclick="askTopic('how to manage my mental health daily')">Self-Care</button>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="messages-area" id="messages">
+    <div class="msg-row">
+      <div class="msg-icon bot">🌿</div>
+      <div class="msg-col">
+        <div class="welcome-badge">🔒 Anonymous &amp; Private</div>
+        <div class="msg-bubble bot" id="welcomeMsg">
+          Hello! I'm <strong>YouthCare AI</strong> 👋<br><br>
+          I'm here to help with questions about <strong>Sexual & Reproductive Health</strong> and <strong>Mental Health</strong> — privately, safely, and without judgment.<br><br>
+          Tap a topic above or type your question. What's on your mind today?
+        </div>
+        <div class="msg-time" id="welcomeTime"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="input-area">
+    <textarea
+      class="input-box"
+      id="userInput"
+      rows="1"
+      placeholder="Ask me anything about your health…"
+      onkeydown="handleKey(event)"
+      oninput="autoResize(this)"
+    ></textarea>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+  <div class="disclaimer">YouthCare AI is not a doctor. For emergencies contact a healthcare professional.</div>
+
+</div><!-- /page -->
+
+<script>
+  /* ── STATE ─────────────────────────────────────────── */
+  let lang = 'en';
+  let history = [];
+  let busy = false;
+
+  /* ── SYSTEM PROMPT ─────────────────────────────────── */
+  const SYSTEM = `You are YouthCare AI, a compassionate, knowledgeable health assistant for Rwandan youth aged 15–30. You work on the YouthCare (eMenya) platform.
+
+YOUR ROLE:
+- Give accurate, non-judgmental, youth-friendly information on Sexual & Reproductive Health (SRH) and Mental Health ONLY.
+- Be warm and caring, like a trusted older sibling who knows about health.
+- Keep responses concise — 3 to 5 short paragraphs maximum.
+- Always respect user privacy. Never share or reference personal data.
+- Be culturally sensitive to the Rwandan context.
+
+SRH TOPICS: HIV prevention & treatment, menstrual health, contraception, STIs, safe sex, puberty, pregnancy, family planning.
+MENTAL HEALTH TOPICS: anxiety, depression, stress, trauma, relationships, self-care, emotional wellbeing, grief.
+
+LANGUAGE RULES:
+- If the user writes in Kinyarwanda, respond FULLY in Kinyarwanda.
+- If the user writes in English, respond in English.
+- Always use simple, clear language accessible to youth.
+
+IMPORTANT RULES:
+- ONLY answer SRH and mental health questions.
+- If asked about unrelated topics say: "I specialise in health topics. May I help you with something about your physical or mental wellbeing?"
+- Never shame or judge the user.
+- End every response with encouragement or an offer to help further.
+- For serious mental health crises always suggest professional help and mention the Ndi-Hape mental health support line in Rwanda.
+- For HIV emergencies mention VCT centres and Isange One Stop Centres.
+- Never diagnose. Always say "you should consult a healthcare provider for a proper diagnosis."
+- Format lists with • bullets when listing multiple items.
+- Use **bold** for key terms.`;
+
+  /* ── INIT ──────────────────────────────────────────── */
+  document.getElementById('welcomeTime').textContent = now();
+
+  /* ── LANGUAGE SWITCH ───────────────────────────────── */
+  function setLang(l) {
+    lang = l;
+    document.getElementById('btnEN').classList.toggle('active', l === 'en');
+    document.getElementById('btnRW').classList.toggle('active', l === 'rw');
+
+    if (l === 'rw') {
+      document.getElementById('statusText').textContent = 'Inshuti y\'ubuzima bwawe';
+      document.getElementById('userInput').placeholder = 'Baza ikibazo cyose ku buzima bwawe…';
+      document.getElementById('topicsBar').innerHTML = `
+        <button class="topic-chip" onclick="askTopic('Ubuzima bw ibyagirwa bya HIV')">HIV</button>
+        <button class="topic-chip" onclick="askTopic('Ubuzima bw imihango y ukwezi')">Imihango</button>
+        <button class="topic-chip" onclick="askTopic('Niyumva nananiwe kandi ntibahuye')">Guhangayika</button>
+        <button class="topic-chip" onclick="askTopic('Uburyo bwo kwirinda inda')">Kwirinda Inda</button>
+        <button class="topic-chip" onclick="askTopic('Ibimenyetso bya depression na gukora iki')">Agahinda</button>
+        <button class="topic-chip" onclick="askTopic('Indwara zandurira mu gukora imibonano')">Indwara STI</button>
+        <button class="topic-chip" onclick="askTopic('Kwitaho ubuzima bwo mu mutwe buri munsi')">Kwikurikira</button>`;
+      document.getElementById('welcomeMsg').innerHTML =
+        'Muraho! Ndi <strong>YouthCare AI</strong> 👋<br><br>' +
+        'Nzakugirira inama ku bibazo by\'<strong>Ubuzima bwo Kubyara</strong> no ' +
+        '<strong>Ubuzima bwo mu Mutwe</strong> — mu ibanga, mutaryarya.<br><br>' +
+        'Kanda ikibazo hejuru cyangwa andika hano. Ni iki gikubangamiye uyu munsi?';
+    } else {
+      document.getElementById('statusText').textContent = 'SRH & Mental Health Assistant';
+      document.getElementById('userInput').placeholder = 'Ask me anything about your health…';
+      document.getElementById('topicsBar').innerHTML = `
+        <button class="topic-chip" onclick="askTopic('HIV prevention tips')">HIV Prevention</button>
+        <button class="topic-chip" onclick="askTopic('menstrual health and cycle advice')">Menstrual Health</button>
+        <button class="topic-chip" onclick="askTopic('I feel very anxious and stressed')">Anxiety & Stress</button>
+        <button class="topic-chip" onclick="askTopic('contraception methods available')">Contraception</button>
+        <button class="topic-chip" onclick="askTopic('depression symptoms and what to do')">Depression</button>
+        <button class="topic-chip" onclick="askTopic('STI symptoms and prevention')">STIs</button>
+        <button class="topic-chip" onclick="askTopic('safe sex practices for youth')">Safe Sex</button>
+        <button class="topic-chip" onclick="askTopic('how to manage my mental health daily')">Self-Care</button>`;
+      document.getElementById('welcomeMsg').innerHTML =
+        'Hello! I\'m <strong>YouthCare AI</strong> 👋<br><br>' +
+        'I\'m here to help with questions about <strong>Sexual & Reproductive Health</strong> and ' +
+        '<strong>Mental Health</strong> — privately, safely, and without judgment.<br><br>' +
+        'Tap a topic above or type your question. What\'s on your mind today?';
+    }
+  }
+
+  /* ── HELPERS ───────────────────────────────────────── */
+  function now() {
+    return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 110) + 'px';
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  }
+
+  function scrollBottom() {
+    const area = document.getElementById('messages');
+    area.scrollTop = area.scrollHeight;
+  }
+
+  function askTopic(text) {
+    document.getElementById('userInput').value = text;
+    sendMessage();
+  }
+  /* ── PROTOTYPE MODE ───────────────────────────── */
+const PROTOTYPE_MODE = true; // change to false when using real AI
+
+function prototypeResponse(text) {
+  const msg = text.toLowerCase();
+
+  if (msg.includes("hiv")) {
+    return "HIV is preventable. Use protection, test regularly, and seek advice from health centers if needed.";
+  }
+
+  if (msg.includes("anxiety") || msg.includes("stress")) {
+    return "Feeling anxious is common. Try deep breathing, talking to someone you trust, and taking breaks from stress.";
+  }
+
+  if (msg.includes("depression")) {
+    return "Depression can affect mood and energy. Talking to a counselor or health professional is very important.";
+  }
+
+  if (msg.includes("contraception") || msg.includes("pregnancy")) {
+    return "There are several safe contraception methods like condoms, pills, and injections. A health worker can guide you.";
+  }
+
+  if (msg.includes("hello") || msg.includes("hi")) {
+    return "Hello 👋 I'm YouthCare AI (prototype mode). How can I help you today?";
+  }
+
+  return "This is a prototype response 🤖. Try asking about HIV, stress, contraception, or mental health.";
+}
+
+  /* ── RENDER MESSAGE ────────────────────────────────── */
+  function renderMsg(text, isUser) {
+    const area = document.getElementById('messages');
+    const row = document.createElement('div');
+    row.className = 'msg-row' + (isUser ? ' user' : '');
+
+    const icon = document.createElement('div');
+    icon.className = 'msg-icon ' + (isUser ? 'user' : 'bot');
+    icon.textContent = isUser ? '👤' : '🌿';
+
+    const col = document.createElement('div');
+    col.className = 'msg-col';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble ' + (isUser ? 'user' : 'bot');
+    bubble.innerHTML = formatText(text);
+
+    const time = document.createElement('div');
+    time.className = 'msg-time';
+    time.textContent = now();
+
+    col.appendChild(bubble);
+    col.appendChild(time);
+
+    if (isUser) { row.appendChild(col); row.appendChild(icon); }
+    else         { row.appendChild(icon); row.appendChild(col); }
+
+    area.appendChild(row);
+    scrollBottom();
+  }
+
+  function formatText(t) {
+    return t
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/•\s(.+)/g, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>)/gs, '<ul style="margin:.4em 0 .4em 1em">$1</ul>')
+      .replace(/\n/g, '<br>');
+  }
+
+  /* ── TYPING INDICATOR ──────────────────────────────── */
+  function showTyping() {
+    const area = document.getElementById('messages');
+    const row = document.createElement('div');
+    row.className = 'typing-row';
+    row.id = 'typingRow';
+    row.innerHTML = `
+      <div class="msg-icon bot">🌿</div>
+      <div class="typing-bubble">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>`;
+    area.appendChild(row);
+    scrollBottom();
+  }
+
+  function hideTyping() {
+    const el = document.getElementById('typingRow');
+    if (el) el.remove();
+  }
+
+  /* ── SEND MESSAGE ──────────────────────────────────── */
+  async function sendMessage() {
+    const input = document.getElementById('userInput');
+    const text = input.value.trim();
+    if (!text || busy) return;
+
+    busy = true;
+    input.value = '';
+    input.style.height = 'auto';
+    document.getElementById('sendBtn').disabled = true;
+
+    renderMsg(text, true);
+    history.push({ role: 'user', content: text });
+    showTyping();
+
+    try {
+     let reply;
+
+if (PROTOTYPE_MODE) {
+  // 🔥 fake chatbot (no API)
+  reply = prototypeResponse(text);
+} else {
+  // 🌐 real AI mode
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: SYSTEM,
+      messages: history
+    })
+  });
+
+  const data = await res.json();
+
+  reply = data.content?.[0]?.text
+    || (lang === 'rw'
+      ? 'Mbabarira, habayeho ikosa. Ongera ugerageze.'
+      : 'Sorry, something went wrong. Please try again.');
+}
+
+      history.push({ role: 'assistant', content: reply });
+      renderMsg(reply, false);
+
+    } catch (err) {
+      hideTyping();
+      renderMsg(
+        lang === 'rw'
+          ? 'Mbabarira, ntabwo nashoboye gusubiza. Reba interineti yawe hanyuma ugerageze.'
+          : 'Sorry, I couldn\'t connect. Please check your internet and try again. 🙏',
+        false
+      );
+    }
+
+    busy = false;
+    document.getElementById('sendBtn').disabled = false;
+    input.focus();
+  }
+</script>
+</body>
+</html>

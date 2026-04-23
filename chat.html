@@ -1,0 +1,48 @@
+<head>
+    <meta charset="UTF-8">
+    <title>YouthCare - Health Hub</title>
+    
+    <link rel="icon" type="image/png" href="icon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<link rel="stylesheet" href="styles.css">
+<div class="language-picker" style="position: absolute; top: 20px; nav-left: 20px;">
+   <nav class="navbar">
+    <div class="logo">🌿 YouthCare</div>
+    
+    <div class="hamburger" onclick="toggleMenu()">
+        <span>☰</span>
+    </div>
+
+    <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="tracker.html">Cycle</a></li>
+        <li><a href="mental.html">Mental Health</a></li>
+        <li><a href="hiv.html">HIV Education</a></li>
+        <li><a href="lessons.html">Lessons</a></li>
+        <li><a href="chat.html">Chat</a></li>
+        <li><a href="aibot.html">AI assistant</a></li>
+    </ul>
+        
+
+</nav>
+    <button class="btn-lang" onclick="changeLanguage('en')">🇬🇧 EN</button>
+    <button class="btn-lang" onclick="changeLanguage('rw')">🇷🇼 RW</button>
+</div>
+<main class="container">
+    <h2>Anonymous Health Expert Chat</h2>
+    <div class="card" style="height: 300px; overflow-y: scroll; border: 1px solid #ddd;" id="chatBox">
+        <p><strong>System:</strong> Welcome! Ask anything. Your identity is hidden.</p>
+    </div>
+    <div style="margin-top: 10px; display: flex;">
+        <input type="text" id="chatInput" style="flex: 1; padding: 10px; border-radius: 5px;" placeholder="Type your question...">
+        <button onclick="sendMessage()" class="btn btn-primary">Send</button>
+    </div>
+    <!-- AI Assistant Floating Button -->
+<a href="aibot.html" class="ai-float-btn">
+  🤖 Meet AI Assistant
+</a>
+<button class="access-btn" onclick="speakPage()">🔊 Speak Page</button>
+<button class="access-btn" onclick="stopSpeaking()">🔇 Stop Voice</button>
+</main>
+<script src="script.js"></script>
